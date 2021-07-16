@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_acs_family_member_form" model="ir.ui.view">
+        <field name="name">acs.family.member.form</field>
+        <field name="model">acs.family.member</field>
+        <field name="arch" type="xml">
+            <form string="Family Member">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="related_patient_id"/>
+                            <field name="relation_id"/>
+                        </group>
+                        <group>
+                            <field name="patient_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Patient View -->
+    <record id="view_patient_form" model="ir.ui.view">
+        <field name="name">patient.form</field>
+        <field name="model">hms.patient</field>
+        <field name="inherit_id" ref="acs_hms_base.view_patient_form"/>
+        <field name="arch" type="xml">
+            <header position="inside">
+                <button name="create_invoice" string="Create Invoice" type="object" class="oe_highlight" attrs="{'invisible': [('invoice_id','!=',False)]}" groups="acs_hms.group_patient_registartion_invoicing"/>
+                <field name="invoice_id" invisible="1"/>
+            </header>
+
+            <div name="button_box" position="inside">
+                <button name="action_treatment" type="object" class="oe_stat_button" groups="acs_hms.group_hms_receptionist" icon="fa-user-md">
+                    <field string="Treatments" name="treatment_count" widget="statinfo"/>
+                </button>
+                <button name="action_appointment" type="object" class="oe_stat_button" groups="acs_hms.group_hms_receptionist" icon="fa-stethoscope">
+                    <field string="Appointments" name="appointment_count" widget="statinfo"/>
+                </button>
+                <button name="action_evaluation" type="object" class="oe_stat_button" groups="acs_hms.group_hms_receptionist" icon="fa-stethoscope">
+                    <field string="Evaluations" name="evaluation_count" widget="statinfo"/>
+                </button>
+                <button name="action_prescription" groups="acs_hms.group_hms_jr_doctor" type="object" class="oe_stat_button" icon="fa-wpforms">
+                    <field string="Prescriptions" name="prescription_count" widget="statinfo"/>
+                </button>
+            </div>
+
+            <field name="age" position="after">
+                <field name="department_ids" widget="many2many_tags" groups="acs_hms.group_allow_multi_department"/>
+            </field>
+
+            <field name="caste" position="after">
+                <field name="ethnic_group_id"/>
+            </field>
+             <field name="company_id" position="attributes">
+                <attribute name="string">Hospital</attribute>
+            </field>
+            <group name="ref_doc_details" position="inside">
+                <field name="ref_doctor_ids" widget="many2many_tags"/>
+                <field name="registration_product_id" groups="acs_hms.group_patient_registartion_invoicing"/>
+            </group>
+
+            <page name="hospital_info" position="after">
+                <page name="clinical_ass" string="Clinical Assesment" groups="acs_hms.group_hms_nurse">
+                    <div>NOTE: Details are shown based on last Completed Patient Evaluation. <t attrs="{'invisible': [('last_evaluation_id','=',False)]}">Last Appointment: <field name="last_evaluation_id" nolabel="1" class="oe_link"/></t></div>
+                    <group>
+                        <group>
+                            <field name="weight"/>
+                            <field name="height"/>
+                            <field name="temp"/>
+                            <field name="hr"/>
+                        </group>
+                        <group>
+                            <field name="rr"/>
+                            <label string="Systolic/Diastolic BP" for="systolic_bp"/>
+                            <div name="systolic_bp">
+                                <div class="oe_inline" style="display: inline;" >
+                                    <field name="systolic_bp" class="oe_inline"/>/<field name="diastolic_bp" class="oe_inline"/>
+                                </div>
+                            </div>
+                            <field name="spo2"/>
+                        </group>
+                        <group>
+                            <field name="bmi"/>
+                        </group>
+                        <group>
+                            <field name="bmi_state"/>
+                        </group>
+                    </group>
+                </page>
+
+                <page name='diseases' string="Diseases" groups="acs_hms.group_hms_jr_doctor">
+                    <separator string="Medical Alert" colspan="4"/>
+                    <group>
+                        <field name="medical_alert_ids" widget="many2many_tags"/>
+                    </group>
+                    <separator string="Past Medical History" colspan="4"/>
+                    <field name="medical_history"/>
+                    <separator string="Diseases History" colspan="4"/>
+                    <field name="patient_diseases_ids"  nolabel="1" colspan="4"/>
+                    <separator string="Family Disease History"/>
+                    <field name="family_history_ids" />
+                    <separator string="Genetic Risk" />
+                    <field name="genetic_risks_ids"/>
+                </page>
+                <page string="Family" name="family_note">
+                    <field name="family_member_ids">
+                        <tree editable="bottom">
+                            <field name="related_patient_id"/>
+                            <field name="relation_id" required="1"/>
+                        </tree>
+                    </field>
+                </page>
+            </page>
+         </field>
+     </record>
+
+</odoo>
